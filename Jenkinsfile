@@ -38,11 +38,11 @@ pipeline {
 
         stage ('Deploying NodeApp to Kubernetes') {
             steps {
-                script {
+                withKubeConfig([credentialsId: 'KubeConfigFile']) {
                     kubernetesDeploy(configs: "deploymentservice.yml")
                 }
             }
         }
     }
 }
-//, kubeconfigId: "kubernetes"
+//, kubeconfigId: "KubeConfigFile"
