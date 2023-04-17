@@ -44,11 +44,11 @@ pipeline {
 
         stage ('Deploying NodeApp to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://127.0.0.1:49606']) {
+                withKubeConfig([credentialsId: 'KubeConfigFile']) {
                     sh 'kubectl apply -f deploymentservice.yml'
                 }   
             }
         }
     }
 }
-//kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "KubeConfigFile")
+//kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "KubeConfigFile"), serverUrl: 'https://127.0.0.1:49606'
