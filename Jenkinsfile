@@ -51,4 +51,3 @@ pipeline {
         }
     }
 }
-//kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "KubeConfigFile")
