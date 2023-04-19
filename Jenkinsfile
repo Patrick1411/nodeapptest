@@ -1,5 +1,5 @@
 pipeline {
-
+    //Declare environment variables for pipeline:
     environment {
         dockerImageName = "rinney/nodeapp"
         dockerImage = ""
@@ -54,7 +54,7 @@ pipeline {
 
         stage ('Deploying NodeApp to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://127.0.0.1:56635']) {
+                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
                     sh 'kubectl apply -f deploymentservice.yml'
                 }   
             }
