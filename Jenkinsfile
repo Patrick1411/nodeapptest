@@ -39,14 +39,17 @@ pipeline {
         stage ('Install kubectl') {
             steps {
                 script {
-                    def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
-                    if (kubectlPath) {
-                        echo "kubectl already installed at ${kubectlPath}"
-                    } else {
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
-                        sh 'chmod +x ./kubectl'
-                        sh 'mv ./kubectl /usr/local/bin/kubectl'
-                    }
+                    // def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
+                    // if (kubectlPath) {
+                    //     echo "kubectl already installed at ${kubectlPath}"
+                    // } else {
+                    //     sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+                    //     sh 'chmod +x ./kubectl'
+                    //     sh 'mv ./kubectl /usr/local/bin/kubectl'
+                    // }
+                    sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+                    sh 'chmod +x ./kubectl'
+                    sh 'mv ./kubectl /usr/local/bin/kubectl'
                     sh 'kubectl version --output=yaml'
                 }
             }
