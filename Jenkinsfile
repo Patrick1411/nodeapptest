@@ -51,7 +51,6 @@ pipeline {
         //         }
         //     }
         // }
-
         stage ('Deploying NodeApp to Kubernetes') {
             steps {
                 withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
