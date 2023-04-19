@@ -1,11 +1,9 @@
 pipeline {
-
+    agent any
     environment {
         dockerImageName = "rinney/nodeapp"
         dockerImage = ""
     }
-
-    agent any
 
     stages {
         stage ('Checkout source code from Github') {
