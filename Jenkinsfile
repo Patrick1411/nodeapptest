@@ -30,34 +30,34 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                        dockerImage.push("latest")
+                        //dockerImage.push("latest")
                     }
                 }
             }
         }
 
-        stage ('Install kubectl') {
-            steps {
-                script {
-                    def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
-                    if (kubectlPath) {
-                        echo "kubectl already installed at ${kubectlPath}"
-                    } else {
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
-                        sh 'chmod +x ./kubectl'
-                        sh 'mv ./kubectl /usr/local/bin/kubectl'
-                    }
-                }
-            }
-        }
+        // stage ('Install kubectl') {
+        //     steps {
+        //         script {
+        //             def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
+        //             if (kubectlPath) {
+        //                 echo "kubectl already installed at ${kubectlPath}"
+        //             } else {
+        //                 sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+        //                 sh 'chmod +x ./kubectl'
+        //                 sh 'mv ./kubectl /usr/local/bin/kubectl'
+        //             }
+        //         }
+        //     }
+        // }
         
-        stage ('Deploying NodeApp to Kubernetes') {
-            steps {
-                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
-                    sh 'kubectl version --output=yaml'
-                    sh 'kubectl apply -f deploymentservice.yml'
-                }   
-            }
-        }
+        // stage ('Deploying NodeApp to Kubernetes') {
+        //     steps {
+        //         withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
+        //             sh 'kubectl version --output=yaml'
+        //             sh 'kubectl apply -f deploymentservice.yml'
+        //         }   
+        //     }
+        // }
     }
 }
