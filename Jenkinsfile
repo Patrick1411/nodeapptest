@@ -36,7 +36,6 @@ pipeline {
                     } catch (err) {
                         echo "Error: ${err.getMessage()}"
                         echo 'docker-credential-helper is not installed, installing now...'
-                        execute the stage to install docker-credential-helper
                         sh 'apt-get update && apt-get install -y docker-credential-helper'
                         sh '''
                         mkdir ~/.docker
