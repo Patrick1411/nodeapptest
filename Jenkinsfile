@@ -1,5 +1,5 @@
 pipeline {
-    //Declare environment variables for pipeline:
+
     environment {
         dockerImageName = "rinney/nodeapp"
         dockerImage = ""
@@ -8,125 +8,116 @@ pipeline {
     agent any
 
     stages {
-        // stage ('Checkout source code from Github') {
-        //     steps {
-        //         git branch: 'main', url: 'https://github.com/Patrick1411/nodeapptest.git'
-        //     }
-        // }
+        stage ('Checkout source code from Github') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Patrick1411/nodeapptest.git'
+            }
+        }
 
-        // stage ('Build image') {
-        //     steps {
-        //         script {
-        //             dockerImage = docker.build dockerImageName
-        //         }
-        //     }
-        // }
-
-        stage('Check if docker-credential-helper is installed') {
+        stage ('Build image') {
             steps {
                 script {
-                    try {
-                        def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper")
-                        def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
-                        if (!isDockerCredentialHelperInstalled) {
-                            echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
-                            // execute the stage to install docker-credential-helper
-                            // sh 'apt-get update && apt-get install -y docker-credential-helper'
-                            // sh '''
-                            // mkdir ~/.docker
-                            // echo '{
-                            //     "credsStore": "osxkeychain",
-                            //     "credHelpers": {
-                            //     "https://index.docker.io/v1/": "osxkeychain"
-                            //     }
-                            // }' > ~/.docker/config.json
-                            // '''
-                        } else {
-                            echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
-                        }
-                    } catch (err) {
-                        echo 'docker-credential-helper is not installed, installing now...'
-                    }
-                    //echo "the value of dockerCredentialHelper is: ${dockerCredentialHelper}"
-                    
-                    // def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
-                    // echo "docker-credential-helper is existed: ${isDockerCredentialHelperInstalled}"
-                    // if (!isDockerCredentialHelperInstalled) {
-                    //     echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
-                    //     // execute the stage to install docker-credential-helper
-                    //     sh 'apt-get update && apt-get install -y docker-credential-helper'
-                    //     sh '''
-                    //     mkdir ~/.docker
-                    //     echo '{
-                    //         "credsStore": "osxkeychain",
-                    //         "credHelpers": {
-                    //         "https://index.docker.io/v1/": "osxkeychain"
-                    //         }
-                    //     }' > ~/.docker/config.json
-                    //     '''
-                    // } else {
-                    //     echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
-                    // }
+                    dockerImage = docker.build dockerImageName
                 }
             }
         }
 
-        // stage ('Install docker-credential-helper') {
-        //     steps {
-        //         sh 'apt-get update && apt-get install -y docker-credential-helper'
-        //     }
-        // }
+        stage('Check if docker-credential-helper is installed') {
+            steps {
+                script {
+                    def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper").trim()
+                    def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
+                    try {
+                        //def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper").trim()
+                        //def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
+                        if (!isDockerCredentialHelperInstalled) {
+                            throw new Exception('docker-credential-helper is not installed')
+                        } else {
+                            echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
+                        }
+                    } catch (err) {
+                        echo "Error: ${err.getMessage()}"
+                        echo "${dockerCredentialHelper}"
+                        echo "${isDockerCredentialHelperInstalled}"
+                        echo 'docker-credential-helper is not installed, installing now...'
+                        execute the stage to install docker-credential-helper
+                        sh 'apt-get update && apt-get install -y docker-credential-helper'
+                        sh '''
+                        mkdir ~/.docker
+                        echo '{
+                            "credsStore": "osxkeychain",
+                            "credHelpers": {
+                            "https://index.docker.io/v1/": "osxkeychain"
+                            }
+                        }' > ~/.docker/config.json
+                        '''
+                    }
+                }
+            }
+        }
 
-        // stage('Configure Docker credentials') {
-        //     steps {
-        //         sh '''
-        //         mkdir ~/.docker
-        //         echo '{
-        //             "credsStore": "osxkeychain",
-        //             "credHelpers": {
-        //             "https://index.docker.io/v1/": "osxkeychain"
-        //             }
-        //         }' > ~/.docker/config.json
-        //         '''
-        //     }
-        // }
+        stage ('Install docker-credential-helper') {
+            steps {
+                sh 'apt-get update && apt-get install -y docker-credential-helper'
+            }
+        }
 
-        // stage ('Pushing image to Docker Hub') {
-        //     environment {
-        //         registryCredential = 'DockerHubAccount'
-        //     }
+        stage('Configure Docker credentials') {
+            steps {
+                sh '''
+                mkdir ~/.docker
+                echo '{
+                    "credsStore": "osxkeychain",
+                    "credHelpers": {
+                    "https://index.docker.io/v1/": "osxkeychain"
+                    }
+                }' > ~/.docker/config.json
+                '''
+            }
+        }
+
+        stage ('Pushing image to Docker Hub') {
+            environment {
+                registryCredential = 'DockerHubAccount'
+            }
             
-        //     steps {
-        //         script {
-        //             docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-        //                 //dockerImage.push("latest")
-        //             }
-        //         }
-        //     }
-        // }
+            steps {
+                script {
+                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
 
-        // stage ('Install kubectl') {
-        //     steps {
-        //         script {
-        //             def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
-        //             if (kubectlPath) {
-        //                 echo "kubectl already installed at ${kubectlPath}"
-        //             } else {
-        //                 sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
-        //                 sh 'chmod +x ./kubectl'
-        //                 sh 'mv ./kubectl /usr/local/bin/kubectl'
-        //             }
-        //         }
-        //     }
-        // }
+        stage ('Install kubectl') {
+            steps {
+                script {
+                    try {
+                        def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
+                        if (kubectlPath) {
+                            echo "kubectl already installed at ${kubectlPath}"
+                        } else {
+                            throw new Exception('kubectl is not installed')
+                        }
+                    } catch (err) {
+                        echo "Error: ${err.getMessage()}"
+                        echo "kubectl is not installed, installing now..."
+                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+                        sh 'chmod +x ./kubectl'
+                        sh 'mv ./kubectl /usr/local/bin/kubectl'
+                    }
+                }
+            }
+        }
         
-        // stage ('Deploying NodeApp to Kubernetes') {
-        //     steps {
-        //         withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
-        //             sh 'kubectl version --output=yaml'
-        //             sh 'kubectl apply -f deploymentservice.yml'
-        //         }   
-        //     }
-        // }
+        stage ('Deploying NodeApp to Kubernetes') {
+            steps {
+                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
+                    sh 'kubectl version --output=yaml'
+                    sh 'kubectl apply -f deploymentservice.yml'
+                }   
+            }
+        }
     }
 }
