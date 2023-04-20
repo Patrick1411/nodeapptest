@@ -8,17 +8,28 @@ pipeline {
     agent any
 
     stages {
-        stage ('Checkout source code from Github') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Patrick1411/nodeapptest.git'
-            }
-        }
+        // stage ('Checkout source code from Github') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/Patrick1411/nodeapptest.git'
+        //     }
+        // }
 
-        stage ('Build image') {
+        // stage ('Build image') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build dockerImageName
+        //         }
+        //     }
+        // }
+
+
+        stage('Add Docker APT repository') {
             steps {
-                script {
-                    dockerImage = docker.build dockerImageName
-                }
+                sh '''
+                curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                sudo apt-get update
+                '''
             }
         }
 
@@ -51,68 +62,48 @@ pipeline {
             }
         }
 
-        stage ('Install docker-credential-helper') {
-            steps {
-                sh 'apt-get update && apt-get install -y docker-credential-helper'
-            }
-        }
-
-        stage('Configure Docker credentials') {
-            steps {
-                sh '''
-                mkdir ~/.docker
-                echo '{
-                    "credsStore": "osxkeychain",
-                    "credHelpers": {
-                    "https://index.docker.io/v1/": "osxkeychain"
-                    }
-                }' > ~/.docker/config.json
-                '''
-            }
-        }
-
-        stage ('Pushing image to Docker Hub') {
-            environment {
-                registryCredential = 'DockerHubAccount'
-            }
+        // stage ('Pushing image to Docker Hub') {
+        //     environment {
+        //         registryCredential = 'DockerHubAccount'
+        //     }
             
-            steps {
-                script {
-                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                        dockerImage.push("latest")
-                    }
-                }
-            }
-        }
+        //     steps {
+        //         script {
+        //             docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
+        //                 dockerImage.push("latest")
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage ('Install kubectl') {
-            steps {
-                script {
-                    try {
-                        def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
-                        if (kubectlPath) {
-                            echo "kubectl already installed at ${kubectlPath}"
-                        } else {
-                            throw new Exception('kubectl is not installed')
-                        }
-                    } catch (err) {
-                        echo "Error: ${err.getMessage()}"
-                        echo "kubectl is not installed, installing now..."
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
-                        sh 'chmod +x ./kubectl'
-                        sh 'mv ./kubectl /usr/local/bin/kubectl'
-                    }
-                }
-            }
-        }
+        // stage ('Install kubectl') {
+        //     steps {
+        //         script {
+        //             try {
+        //                 def kubectlPath = sh(returnStdout: true, script: 'which kubectl').trim()
+        //                 if (kubectlPath) {
+        //                     echo "kubectl already installed at ${kubectlPath}"
+        //                 } else {
+        //                     throw new Exception('kubectl is not installed')
+        //                 }
+        //             } catch (err) {
+        //                 echo "Error: ${err.getMessage()}"
+        //                 echo "kubectl is not installed, installing now..."
+        //                 sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"'
+        //                 sh 'chmod +x ./kubectl'
+        //                 sh 'mv ./kubectl /usr/local/bin/kubectl'
+        //             }
+        //         }
+        //     }
+        // }
         
-        stage ('Deploying NodeApp to Kubernetes') {
-            steps {
-                withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
-                    sh 'kubectl version --output=yaml'
-                    sh 'kubectl apply -f deploymentservice.yml'
-                }   
-            }
-        }
+        // stage ('Deploying NodeApp to Kubernetes') {
+        //     steps {
+        //         withKubeConfig([credentialsId: 'KubeConfigFile', serverUrl: 'https://192.168.58.2:8443']) {
+        //             sh 'kubectl version --output=yaml'
+        //             sh 'kubectl apply -f deploymentservice.yml'
+        //         }   
+        //     }
+        // }
     }
 }
