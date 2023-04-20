@@ -26,6 +26,7 @@ pipeline {
             steps {
                 script {
                     def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper").trim()
+                    echo "the value of dockerCredentialHelper is: ${dockerCredentialHelper}"
                     def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
                     echo "docker-credential-helper is existed: ${isDockerCredentialHelperInstalled}"
                     if (!isDockerCredentialHelperInstalled) {
@@ -68,19 +69,19 @@ pipeline {
         //     }
         // }
 
-        stage ('Pushing image to Docker Hub') {
-            environment {
-                registryCredential = 'DockerHubAccount'
-            }
+        // stage ('Pushing image to Docker Hub') {
+        //     environment {
+        //         registryCredential = 'DockerHubAccount'
+        //     }
             
-            steps {
-                script {
-                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                        //dockerImage.push("latest")
-                    }
-                }
-            }
-        }
+        //     steps {
+        //         script {
+        //             docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
+        //                 //dockerImage.push("latest")
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage ('Install kubectl') {
         //     steps {
