@@ -25,9 +25,9 @@ pipeline {
         stage('Check if docker-credential-helper is installed') {
             steps {
                 script {
-                    def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper").trim()
+                    def dockerCredentialHelper = sh(returnStdout: true, returnStatus: true, script: "which docker-credential-helper").trim()
                     echo "docker-credential-helper is existed: ${dockerCredentialHelper}"
-                    
+                    echo "the status of dockerCredentialHelper is: ${dockerCredentialHelper}"
                     if (!dockerCredentialHelper) {
                         echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
                         // execute the stage to install docker-credential-helper
