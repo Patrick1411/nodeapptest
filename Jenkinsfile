@@ -14,13 +14,13 @@ pipeline {
             }
         }
 
-        stage ('Build image') {
-            steps {
-                script {
-                    dockerImage = docker.build dockerImageName
-                }
-            }
-        }
+        // stage ('Build image') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build dockerImageName
+        //         }
+        //     }
+        // }
 
         stage ('Pushing image to Docker Hub') {
             environment {
