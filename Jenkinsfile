@@ -27,7 +27,12 @@ pipeline {
                 script {
                     def dockerCredentialHelper = sh(returnStdout: true, script: 'dpkg --list docker-credential-helper').trim()
                     //def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper")
-                    echo "the value of dockerCredentialHelper is: ${dockerCredentialHelper}"
+                    //echo "the value of dockerCredentialHelper is: ${dockerCredentialHelper}"
+                    if (output.startsWith('ii')) {
+                        echo 'docker-credential-helper is already installed'
+                    } else {
+                        echo 'docker-credential-helper is not installed, installing now...'
+                    }
                     // def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
                     // echo "docker-credential-helper is existed: ${isDockerCredentialHelperInstalled}"
                     // if (!isDockerCredentialHelperInstalled) {
