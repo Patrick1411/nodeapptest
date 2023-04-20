@@ -26,8 +26,9 @@ pipeline {
             steps {
                 script {
                     def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper")
-                    echo "docker-credential-helper is existed: ${dockerCredentialHelper}"
-                    if (dockerCredentialHelper == '') {
+                    def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
+                    echo "docker-credential-helper is existed: ${isDockerCredentialHelperInstalled}"
+                    if (!isDockerCredentialHelperInstalled) {
                         echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
                         // execute the stage to install docker-credential-helper
                         sh 'apt-get update && apt-get install -y docker-credential-helper'
