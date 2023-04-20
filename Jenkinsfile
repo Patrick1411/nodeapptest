@@ -29,22 +29,22 @@ pipeline {
                     echo "the value of dockerCredentialHelper is: ${dockerCredentialHelper}"
                     def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
                     echo "docker-credential-helper is existed: ${isDockerCredentialHelperInstalled}"
-                    if (!isDockerCredentialHelperInstalled) {
-                        echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
-                        // execute the stage to install docker-credential-helper
-                        sh 'apt-get update && apt-get install -y docker-credential-helper'
-                        sh '''
-                        mkdir ~/.docker
-                        echo '{
-                            "credsStore": "osxkeychain",
-                            "credHelpers": {
-                            "https://index.docker.io/v1/": "osxkeychain"
-                            }
-                        }' > ~/.docker/config.json
-                        '''
-                    } else {
-                        echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
-                    }
+                    // if (!isDockerCredentialHelperInstalled) {
+                    //     echo "docker-credential-helper is not installed, docker-credential-helper is prepared to be installed."
+                    //     // execute the stage to install docker-credential-helper
+                    //     sh 'apt-get update && apt-get install -y docker-credential-helper'
+                    //     sh '''
+                    //     mkdir ~/.docker
+                    //     echo '{
+                    //         "credsStore": "osxkeychain",
+                    //         "credHelpers": {
+                    //         "https://index.docker.io/v1/": "osxkeychain"
+                    //         }
+                    //     }' > ~/.docker/config.json
+                    //     '''
+                    // } else {
+                    //     echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
+                    // }
                 }
             }
         }
