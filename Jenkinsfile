@@ -26,16 +26,16 @@ pipeline {
             steps {
                 script {
                     try {
-                        def dockerCredentialHelper = sh(returnStdout: true, script: "which docker-credential-helper").trim()
+                        def dockerCredentialHelper = sh(returnStdout: true, script: "which golang-docker-credential-helper").trim()
                         def isDockerCredentialHelperInstalled = dockerCredentialHelper ? true : false
                         if (!isDockerCredentialHelperInstalled) {
-                            throw new Exception('docker-credential-helper is not installed')
+                            throw new Exception('golang-docker-credential-helper is not installed')
                         } else {
                             echo "docker-credential-helper is already installed at ${dockerCredentialHelper}"
                         }
                     } catch (err) {
                         echo "Error: ${err.getMessage()}"
-                        echo 'docker-credential-helper is not installed, installing now...'
+                        echo 'golang-docker-credential-helper is not installed, installing now...'
                         sh 'apt-get update && apt-get install -y golang-docker-credential-helpers'
                         sh '''
                         echo '{
