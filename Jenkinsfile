@@ -95,3 +95,11 @@ pipeline {
         }
     }
 }
+
+// {
+// 	"auths": {
+// 		"https://index.docker.io/v1/": {
+// 			"auth": "cmlubmV5OlJpbm5leV81MjAxMDNobg=="
+// 		}
+// 	}
+// }
