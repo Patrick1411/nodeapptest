@@ -1,5 +1,5 @@
 pipeline {
-
+    //Add environment variables:
     environment {
         dockerImageName = "rinney/nodeapp"
         dockerImage = ""
