@@ -1,9 +1,4 @@
 pipeline {
-    //Add environment variables:
-    environment {
-        dockerImageName = "rinney/nodeapp"
-        dockerImage = ""
-    }
 
     agent any
 
@@ -11,14 +6,6 @@ pipeline {
         stage ('Checkout source code from Github') {
             steps {
                 git branch: 'main', url: 'https://github.com/Patrick1411/nodeapptest.git'
-            }
-        }
-
-        stage ('Build image') {
-            steps {
-                script {
-                    dockerImage = docker.build dockerImageName
-                }
             }
         }
 
@@ -50,19 +37,15 @@ pipeline {
         //     }
         // }
 
-        stage ('Pushing image to Docker Hub') {
-            environment {
-                registryCredential = 'DockerHubAccount'
-            }
-            
+        stage ('Build and push image to Docker Hub') {
             steps {
-                script {
-                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                        dockerImage.push("latest")
-                    }
+                withDockerRegistry(credentialsId: 'DockerHubAccount', url: 'https://index.docker.io/v1/') {
+                    sh 'docker build -t rinney/nodeapp:v1.0.0 .'
+                    sh 'docker push rinney/nodeapp:v1.0.0'
                 }
             }
         }
+
 
         stage ('Install kubectl') {
             steps {
