@@ -36,8 +36,7 @@ pipeline {
                     } catch (err) {
                         echo "Error: ${err.getMessage()}"
                         echo 'docker-credential-helper is not installed, installing now...'
-                        sh 'curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -'
-                        sh 'apt-get update && apt-get install -y docker-credential-helper'
+                        sh 'apt-get update && apt-get install -y golang-docker-credential-helpers'
                         sh '''
                         mkdir ~/.docker
                         echo '{
