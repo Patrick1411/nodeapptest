@@ -38,7 +38,6 @@ pipeline {
                         echo 'docker-credential-helper is not installed, installing now...'
                         sh 'apt-get update && apt-get install -y golang-docker-credential-helpers'
                         sh '''
-                        mkdir ~/.docker
                         echo '{
                             "credsStore": "osxkeychain",
                             "credHelpers": {
